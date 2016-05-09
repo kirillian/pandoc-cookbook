@@ -53,4 +53,12 @@ else
       "default" => "pandoc"
     )
   end
+
+  package "texlive" do
+    package_name value_for_platform(
+      "arch" => { "default" => "texlive-most" },
+      "gentoo" => { "default" => "app-text/texlive"},
+      "default" => "texlive"
+    )
+  end
 end
