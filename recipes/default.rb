@@ -21,6 +21,10 @@ package "texlive" do
   action :install
 end
 
+packaged "texlive-full" do
+  action :install
+end
+
 cache_dir = Chef::Config[:file_cache_path]
 download_dest = File.join(cache_dir, "pandoc-1.17.0.2-1-amd64.deb")
 
