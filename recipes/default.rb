@@ -21,7 +21,7 @@ package "texlive" do
   action :install
 end
 
-packaged "texlive-full" do
+package "texlive-full" do
   action :install
 end
 
