@@ -17,48 +17,21 @@
 # limitations under the License.
 #
 
-case node['platform']
-when "windows"
-  windows_package "pandoc" do
-    source node['pandoc']['exe_url']
-    checksum node['pandoc']['exe_checksum']
-    action :install
-  end
-when "mac_os_x"
-  case node['pandoc']['osx_install_method']
-  when 'dmg'
-    dmg_package "pandoc-#{node['pandoc']['dmg_version']}" do
-      source node['pandoc']['dmg_url']
-      checksum node['pandoc']['dmg_checksum']
-      type "pkg"
-      dmg_name "pandoc-#{node['pandoc']['dmg_version']}"
-      volumes_dir "pandoc #{node['pandoc']['dmg_version']}"
-    end
-  when 'brew'
-    package "haskell-platform" do
-      notifies :run, "cabal update", :immediately
-    end
-    execute "cabal update" do
-      action :nothing
-    end
-    execute "cabal install pandoc" do
-      not_if "pandoc -h"
-    end
-  end
-else
-  package "pandoc" do
-    package_name value_for_platform(
-      "arch" => { "default" => "haskell-pandoc" },
-      "gentoo" => { "default" => "app-text/pandoc"},
-      "default" => "pandoc"
-    )
-  end
+package "texlive" do
+  action :install
+end
 
-  package "texlive" do
-    package_name value_for_platform(
-      "arch" => { "default" => "texlive-most" },
-      "gentoo" => { "default" => "app-text/texlive"},
-      "default" => "texlive"
-    )
-  end
+cache_dir = Chef::Config[:file_cache_path]
+download_dest = File.join(cache_dir, "pandoc-1.17.0.2-1-amd64.deb")
+
+remote_file download_dest do
+  source "https://github.com/jgm/pandoc/releases/download/1.17.0.2/pandoc-1.17.0.2-1-amd64.deb"
+  mode '0644'
+  action :create_if_missing
+end
+
+package 'pandoc' do
+  source download_dest
+
+  provider Chef::Provider::Package::Dpkg
 end
