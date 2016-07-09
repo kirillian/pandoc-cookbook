@@ -23,6 +23,7 @@ end
 
 package "texlive-full" do
   action :install
+  timeout 6000
 end
 
 cache_dir = Chef::Config[:file_cache_path]
